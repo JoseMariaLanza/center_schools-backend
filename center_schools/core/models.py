@@ -11,6 +11,7 @@ class UserManager(BaseUserManager):
         if not email:
             raise ValueError('Users must have an email address')
         user = self.model(
+            # normalize_email is a helper function from BaseUserManager class
             email=self.normalize_email(email),
             **extra_fields
         )
