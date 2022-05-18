@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from person.models import Person
-from person.serializers import PersonDetailSerializer
+from person.serializers import PersonSerializer, PersonDetailSerializer
 
 
 PERSONS_URL = reverse('person:person-list')
@@ -59,13 +59,6 @@ class PrivatePersonsApiTests(TestCase):
 
     def test_retrieve_authenticated_user_personal_data_detail(self):
         """Test retrieving user personal data"""
-        # person = sample_person(user=self.user)
-        # user2 = get_user_model().objects.create_user(
-        #     'other@mail.com',
-        #     'password123'
-        # )
-        # sample_person(user=user2, first_name='Test 2')
-
         url = user_detail_url(self.user.id)
         res = self.client.get(url)
 
@@ -73,13 +66,13 @@ class PrivatePersonsApiTests(TestCase):
         self.assertEqual(res.data, serializer.data)
 
     # A list of persons only can be retrieved for a group admin user
-    # def test_retrieve_persons(self):
-    #     """Test retrieving persons"""
-    #     sample_person(self.user)
-    #     sample_person(self.user)
-    #     res = self.client.get(PERSONS_URL)
+    def test_retrieve_persons(self):
+        """Test retrieving persons"""
+        sample_person(self.user)
+        sample_person(self.user)
+        res = self.client.get(PERSONS_URL)
 
-    #     persons = Person.objects.all().order_by('-last_name')
-    #     serializer = PersonSerializer(persons, many=True)
-    #     self.assertEqual(res.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(res.data, serializer.data)
+        persons = Person.objects.all().order_by('-last_name')
+        serializer = PersonSerializer(persons, many=True)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.data, serializer.data)
