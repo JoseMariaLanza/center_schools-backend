@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from school.models import Person
-from school.serializers import PersonSerializer, PersonDetailSerializer
+from school.serializers import PersonDetailSerializer
 
 
 PERSONS_URL = reverse('school:person-list')
