@@ -3,6 +3,8 @@ from core import models as CoreAppModels
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+from core.models import User
+
 
 class Person(models.Model):
     """User personal data
@@ -25,10 +27,6 @@ class Person(models.Model):
         EXPULSED = 'Expulsed',
         GUEST = 'Guest'
 
-    # user = models.ForeignKey(
-    #     settings.AUTH_USER_MODEL,
-    #     on_delete=models.CASCADE,
-    # )
     user = models.OneToOneField(
         CoreAppModels.User,
         on_delete=models.CASCADE,
@@ -118,19 +116,30 @@ class Graduation(models.Model):
         Person,
         on_delete=models.CASCADE,
     )
-    graduation_at_date = models.CharField(
+    current_graduation = models.CharField(
         max_length=10,
         choices=Graduations.choices,
-        null=True,
+        null=True
     )
     apply_for = models.CharField(
         max_length=10,
         choices=Graduations.choices,
+        null=True
+    )
+    weight = models.DecimalField(
+        max_digits=5,
+        decimal_places=3,
         null=True,
+        default=None
     )
     graduation_date = models.DateTimeField(
-        auto_now=False, auto_now_add=False)
-    evaluator = models.CharField(max_length=100)
+        auto_now=False,
+        auto_now_add=False
+    )
+    evaluators = models.ManyToManyField(
+        Person,
+        related_name='evaluators'
+    )
     graduation_place = models.CharField(max_length=255)
     status = models.CharField(
         max_length=20,
@@ -138,7 +147,11 @@ class Graduation(models.Model):
         default=None,
     )
     qualification = models.DecimalField(
-        max_digits=4, decimal_places=2, null=True, default=None)
+        max_digits=4,
+        decimal_places=2,
+        null=True,
+        default=None
+    )
     observation = models.TextField(
         max_length=255,
         null=True,
