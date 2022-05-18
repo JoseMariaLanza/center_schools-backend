@@ -16,6 +16,7 @@ class PersonSerializer(serializers.ModelSerializer):
             'blood_type',
             'observation',
             'status',
+            'graduations'
         )
         read_only_fields = ('id',)
 
@@ -32,10 +33,11 @@ class GraduationSerializer(serializers.ModelSerializer):
             'certification_id',
             'evaluator',
             'graduation_place',
+            'graduations'
         )
         read_only_fields = ('id',)
 
 
 class PersonDetailSerializer(PersonSerializer):
     """Serializer for a user personal data"""
-    # graduations = GraduationSerializer(many=True, read_only=True)
+    graduations = GraduationSerializer(many=True, read_only=True)

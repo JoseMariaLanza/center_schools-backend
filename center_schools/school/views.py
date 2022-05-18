@@ -1,3 +1,5 @@
+from tokenize import group
+from core.models import User
 from rest_framework import viewsets, mixins
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -35,6 +37,8 @@ class BasePersonAttrViewSet(viewsets.GenericViewSet,
 class PersonViewSet(viewsets.ModelViewSet):
     """Manage persons in the database"""
     serializer_class = serializers.PersonSerializer
+    # members = User.objects.filter(groups__id__in=[User.groups.field])
+    # queryset = Person.objects.filter(user__in=members)
     queryset = Person.objects.all()
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
@@ -46,12 +50,16 @@ class PersonViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         """Retrieve the graduations for the authenticated user"""
         graduations = self.request.query_params.get('graduations')
+        groups = self.request.user.groups.all()
+        members = User.objects.filter(groups__id__in=groups)
         queryset = self.queryset
         if graduations:
             graduation_ids = self._params_to_ints(graduations)
-            queryset = queryset.filter(graduation__id__in=graduation_ids)
+            queryset = queryset.filter(graduations__id__in=graduation_ids)
+        if members:
+            queryset = queryset.filter(user__id__in=members)
 
-        return queryset.filter(user=self.request.user)
+        return queryset
 
     def get_serializer_class(self):
         """Return appropiate serializer class"""

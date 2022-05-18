@@ -20,8 +20,9 @@ class Person(models.Model):
 
     class Status(models.TextChoices):
         """Statusses for a person member of a School"""
-        STUDENT = 'Student',
         INSTRUCTOR = 'Instructor',
+        STUDENT = 'Student',
+        UNSUSCRIBED = 'Unsuscribed',
         EXPULSED = 'Expulsed',
         GUEST = 'Guest'
 
@@ -52,7 +53,7 @@ class Person(models.Model):
         blank=True
     )
     status = models.CharField(
-        max_length=10,
+        max_length=11,
         choices=Status.choices,
         default=Status.GUEST,
     )
