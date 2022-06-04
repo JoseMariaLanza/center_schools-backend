@@ -1,5 +1,5 @@
-from tokenize import group
-from core.models import User
+# from tokenize import group
+from user.models import User
 from rest_framework import viewsets, mixins
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated

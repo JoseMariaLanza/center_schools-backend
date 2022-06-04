@@ -2,8 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.translation import gettext_lazy as _
 
-from core import models
-# from person import models as PersonModels
+from .models import User
 
 
 class UserAdmin(BaseUserAdmin):
@@ -27,6 +26,4 @@ class UserAdmin(BaseUserAdmin):
     )
 
 
-admin.site.register(models.User, UserAdmin)
-# admin.site.register(PersonModels.Person)
-# admin.site.register(PersonModels.Graduation)
+admin.site.register(User, UserAdmin)
