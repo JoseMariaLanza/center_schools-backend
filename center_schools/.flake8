@@ -1,6 +1,10 @@
 [flake8]
 exclude =
     ./user/models/__init__.py,
+    # ./school/__init__.py,
+    ./school/models/__init__.py,
+    # ./school/services/__init__.py,
+    # ./school/services/bussines/__init__.py,
     migrations,
     __pycache__,
     manage.py,
