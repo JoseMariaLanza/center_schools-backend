@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from school.models import Person, Graduation
+from user.serializers import UserSerializer
 
 
 class PersonSerializer(serializers.ModelSerializer):
@@ -9,14 +10,14 @@ class PersonSerializer(serializers.ModelSerializer):
         model = Person
         fields = (
             'id',
-            'user_id',
+            'user',
             'first_name',
             'last_name',
             'birth_date',
             'blood_type',
             'observation',
             'status',
-            'graduations'
+            # 'graduations'
         )
         read_only_fields = ('id',)
 
@@ -39,5 +40,10 @@ class GraduationSerializer(serializers.ModelSerializer):
 
 
 class PersonDetailSerializer(PersonSerializer):
-    """Serializer for a user personal data"""
+    """Serializer for person graduations"""
     graduations = GraduationSerializer(many=True, read_only=True)
+
+
+class UserProfileSerializer(PersonSerializer):
+    """Serializer for User personal data"""
+    user = UserSerializer(read_only=True)
