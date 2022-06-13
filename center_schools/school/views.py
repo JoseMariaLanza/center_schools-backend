@@ -1,10 +1,10 @@
-# from tokenize import group
-# from user.models import User
+from django.contrib.auth.models import Group
 from rest_framework import generics, viewsets, mixins
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 from school.models import Person
+from user.models.User import User
 
 from school import serializers
 
@@ -73,16 +73,22 @@ class BasePersonAttrViewSet(viewsets.GenericViewSet,
 
 
 class MembersViewSet(viewsets.ModelViewSet):
-    """Manage persons in the database"""
+    """Retrieve users for school user admin authenticated"""
     serializer_class = serializers.UserProfileSerializer
     queryset = Person.objects.all()
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated, IsAdminUser,)
 
-    # def get_queryset(self):
-    #     queryset = self.queryset
-    #     queryset = queryset.filter(user=self.request.user)
-    #     return queryset
+    def get_queryset(self):
+        """Retrieve members of a school for the admin
+            school user authenticated"""
+        groups = Group.objects.filter(user=self.request.user)
+        users = User.objects.filter(groups__id__in=groups)
+
+        queryset = self.queryset
+        queryset = queryset.filter(user__in=users)
+
+        return queryset
 
     # def _params_to_ints(self, qs):
     #     """Convert a list of IDs to a list of integers"""

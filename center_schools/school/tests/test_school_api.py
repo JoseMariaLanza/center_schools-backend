@@ -8,12 +8,19 @@ from rest_framework.test import APIClient
 from school.models import Person
 from school.serializers import UserProfileSerializer
 
+from django.contrib.auth.models import Group
+
 
 # Routes for superusers
 # api/1.1/school/members
-PERSONS_URL = reverse('school:person-list')
+# PERSONS_URL = reverse('school:person-list')
 
 # Route for logged in user
+
+
+def school_members():
+    """Return person detail URL"""
+    return reverse('school:person-list')
 
 
 def user_profile_url():
@@ -54,6 +61,16 @@ def sample_person(user, **params):
     return Person.objects.create(user=user, **defaults)
 
 
+def sample_group(**params):
+    """Create a sample group"""
+    defaults = {
+        'name': 'new_group'
+    }
+    defaults.update(params)
+    new_group, created = Group.objects.get_or_create(**params)
+    return new_group, created
+
+
 class PublicSchoolApiTests(TestCase):
     """Test the publicly available persons API"""
 
@@ -67,10 +84,14 @@ class PublicSchoolApiTests(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
-    def test_retrieve_school_members(self):
+    def test_not_retrieve_school_members_for_unauthenticated_user(self):
         """Test that login is required for retrieving a
         list of school members"""
-        res = self.client.get(PERSONS_URL)
+        # res = self.client.get(PERSONS_URL)
+
+        # group = sample_group(name='group1')
+        url = school_members()
+        res = self.client.get(url)
 
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
@@ -102,24 +123,40 @@ class PrivateSchoolApiTests(TestCase):
         """Thest that updating profile data"""
         pass
 
-    # region Admin Users only
+    # region Admin Users Only
     def test_retrieve_school_members_forbidden_to_user(self):
         """Test that a common user is not authorized to view school members"""
         user = sample_user()
         self.client.force_authenticate(user)
 
-        res = self.client.get(PERSONS_URL)
+        # group = sample_group(name='group1')
+        url = school_members()
+        res = self.client.get(url)
 
         self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_retrieve_school_members_to_superuser(self):
+    def test_retrieve_school_members_to_school_user_admin(self):
         """Test that a superuser can view all users"""
         user = sample_superuser()
         self.client.force_authenticate(user)
 
-        res = self.client.get(PERSONS_URL)
+        group1 = sample_group(name='group1')
+        group2 = sample_group(name='group2')
+        groups = []
+        groups.append(group1[0])
+        groups.append(group2[0])
+        groups = Group.objects.filter(name__in=groups)
 
+        url = school_members()
+
+        for group in groups:
+            group.user_set.add(user)
+
+        res = self.client.get(url)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
+        # res = self.client.get(PERSONS_URL)
+
+        # self.assertEqual(res.status_code, status.HTTP_200_OK)
     # endregion
 
     # region Staff Only
