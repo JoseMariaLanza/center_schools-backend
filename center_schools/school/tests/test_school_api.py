@@ -11,13 +11,6 @@ from school.serializers import UserProfileSerializer
 from django.contrib.auth.models import Group
 
 
-# Routes for superusers
-# api/1.1/school/members
-# PERSONS_URL = reverse('school:person-list')
-
-# Route for logged in user
-
-
 def school_members():
     """Return person detail URL"""
     return reverse('school:person-list')
@@ -87,16 +80,10 @@ class PublicSchoolApiTests(TestCase):
     def test_not_retrieve_school_members_for_unauthenticated_user(self):
         """Test that login is required for retrieving a
         list of school members"""
-        # res = self.client.get(PERSONS_URL)
-
-        # group = sample_group(name='group1')
         url = school_members()
         res = self.client.get(url)
 
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
-
-    """Here goes tests that login and instructor or editor? (editor=staff)
-    role is required to show users member of a school"""
 
 
 class PrivateSchoolApiTests(TestCase):
@@ -129,7 +116,6 @@ class PrivateSchoolApiTests(TestCase):
         user = sample_user()
         self.client.force_authenticate(user)
 
-        # group = sample_group(name='group1')
         url = school_members()
         res = self.client.get(url)
 
@@ -154,15 +140,4 @@ class PrivateSchoolApiTests(TestCase):
 
         res = self.client.get(url)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        # res = self.client.get(PERSONS_URL)
-
-        # self.assertEqual(res.status_code, status.HTTP_200_OK)
-    # endregion
-
-    # region Staff Only
-    # REFACTOR |
-    # retrieve user list if is staff and person.status is instructor?
-        """Create a new view that retrieve a list of users
-        if authenticated user is staff and is instructor once tests are crated
-        """
     # endregion

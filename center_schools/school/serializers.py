@@ -16,8 +16,7 @@ class PersonSerializer(serializers.ModelSerializer):
             'birth_date',
             'blood_type',
             'observation',
-            'status',
-            # 'graduations'
+            'status'
         )
         read_only_fields = ('id',)
 
