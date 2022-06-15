@@ -1,5 +1,5 @@
 from django.contrib.auth.models import Group
-from rest_framework import generics, viewsets, mixins
+from rest_framework import viewsets, mixins
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
@@ -32,7 +32,7 @@ class BasePersonAttrViewSet(viewsets.GenericViewSet,
 
 class MembersViewSet(viewsets.ModelViewSet):
     """Retrieve users for school user admin authenticated"""
-    serializer_class = serializers.UserProfileSerializer
+    serializer_class = serializers.UserAccountSerializer
     queryset = Person.objects.all()
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated, IsAdminUser,)
@@ -49,12 +49,12 @@ class MembersViewSet(viewsets.ModelViewSet):
         return queryset
 
 
-class ManageUserProfileView(generics.RetrieveUpdateAPIView):
-    """Manage authenticated user profile"""
-    serializer_class = serializers.UserProfileSerializer
-    authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated,)
+# class ManagePersonalDataView(generics.RetrieveUpdateAPIView):
+#     """Manage authenticated user profile"""
+#     serializer_class = serializers.PersonSerializer
+#     authentication_classes = (TokenAuthentication,)
+#     permission_classes = (IsAuthenticated,)
 
-    def get_object(self):
-        """Retrieve and return authenticated user profile"""
-        return Person.objects.get(user=self.request.user)
+#     def get_object(self):
+#         """Retrieve and return authenticated user profile"""
+#         return Person.objects.get(user=self.request.user)

@@ -5,8 +5,10 @@ from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from school.models import Person
-from school.serializers import UserProfileSerializer
+from school.models.Person import Person
+
+from user.models import User
+from user.serializers import UserSerializer
 
 from django.contrib.auth.models import Group
 
@@ -16,9 +18,9 @@ def school_members():
     return reverse('school:person-list')
 
 
-def user_profile_url():
+def user_me_url():
     """Return person detail URL"""
-    return reverse('school:profile')
+    return reverse('user:me')
 
 
 def sample_user():
@@ -72,7 +74,7 @@ class PublicSchoolApiTests(TestCase):
 
     def test_login_required(self):
         """Test that login is required for retrieving user personal data"""
-        url = user_profile_url()
+        url = user_me_url()
         res = self.client.get(url)
 
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -92,16 +94,16 @@ class PrivateSchoolApiTests(TestCase):
     def setUp(self):
         self.client = APIClient()
 
-    def test_retrieve_authenticated_user_profile_success(self):
+    def test_retrieve_authenticated_user_me_success(self):
         """Test retrieving user personal data"""
         user = sample_user()
         self.client.force_authenticate(user)
 
-        url = user_profile_url()
+        url = user_me_url()
         res = self.client.get(url)
 
-        user_data = Person.objects.get(user=user)
-        serializer = UserProfileSerializer(user_data)
+        user_data = User.objects.get(id=user.id)
+        serializer = UserSerializer(user_data)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)

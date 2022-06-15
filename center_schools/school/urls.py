@@ -11,6 +11,4 @@ app_name = 'school'
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('user/profile/', views.ManageUserProfileView.as_view(),
-         name='profile')
 ]

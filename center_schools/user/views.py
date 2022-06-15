@@ -6,7 +6,7 @@ from rest_framework.settings import api_settings
 
 from user.serializers import UserSerializer, AuthTokenSerializer
 from school.models.Person import Person
-from school.serializers import UserProfileSerializer
+from school.serializers import PersonSerializer, UserAccountSerializer
 
 
 class CreateUserView(generics.CreateAPIView):
@@ -41,7 +41,30 @@ class IsAdminUser(BasePermission):
 
 class SystemUsersViewSet(viewsets.ModelViewSet):
     """Retrieve all system users for superuser"""
-    serializer_class = UserProfileSerializer
+    serializer_class = UserAccountSerializer
     queryset = Person.objects.all()
     authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (IsAuthenticated, IsAdminUser,)
+
+
+class ManagePersonalDataView(generics.RetrieveUpdateAPIView):
+    """Manage authenticated user profile"""
+    serializer_class = PersonSerializer
+    authentication_classes = (authentication.TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    lookup_field = 'id'
+
+    def get_object(self):
+        """Retrieve and return authenticated user profile"""
+        return Person.objects.get(user=self.request.user)
+
+
+class ManageAccountView(generics.RetrieveUpdateAPIView):
+    """Manage authenticated user account"""
+    serializer_class = UserAccountSerializer
+    authentication_classes = (authentication.TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get_object(self):
+        """Retrieve and return authenticated user profile"""
+        return Person.objects.get(user=self.request.user)

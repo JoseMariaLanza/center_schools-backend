@@ -18,7 +18,7 @@ class PersonSerializer(serializers.ModelSerializer):
             'observation',
             'status'
         )
-        read_only_fields = ('id',)
+        read_only_fields = ('id', 'user',)
 
 
 class GraduationSerializer(serializers.ModelSerializer):
@@ -38,11 +38,11 @@ class GraduationSerializer(serializers.ModelSerializer):
         read_only_fields = ('id',)
 
 
-class PersonDetailSerializer(PersonSerializer):
+class PersonGraduationsSerializer(PersonSerializer):
     """Serializer for person graduations"""
     graduations = GraduationSerializer(many=True, read_only=True)
 
 
-class UserProfileSerializer(PersonSerializer):
+class UserAccountSerializer(PersonSerializer):
     """Serializer for User personal data"""
     user = UserSerializer(read_only=True)
