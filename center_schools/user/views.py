@@ -8,6 +8,8 @@ from user.serializers import UserSerializer, AuthTokenSerializer
 from school.models.Person import Person
 from school.serializers import PersonSerializer, UserAccountSerializer
 
+from user.models.User import User
+
 
 class CreateUserView(generics.CreateAPIView):
     """Create a new user in the system"""
@@ -39,14 +41,6 @@ class IsAdminUser(BasePermission):
         return request.user and request.user.is_superuser
 
 
-class SystemUsersViewSet(viewsets.ModelViewSet):
-    """Retrieve all system users for superuser"""
-    serializer_class = UserAccountSerializer
-    queryset = Person.objects.all()
-    authentication_classes = (authentication.TokenAuthentication,)
-    permission_classes = (IsAuthenticated, IsAdminUser,)
-
-
 class ManagePersonalDataView(generics.RetrieveUpdateAPIView):
     """Manage authenticated user profile"""
     serializer_class = PersonSerializer
@@ -59,12 +53,35 @@ class ManagePersonalDataView(generics.RetrieveUpdateAPIView):
         return Person.objects.get(user=self.request.user)
 
 
-class ManageAccountView(generics.RetrieveUpdateAPIView):
+class ManageMyAccountView(generics.RetrieveUpdateAPIView):
     """Manage authenticated user account"""
     serializer_class = UserAccountSerializer
     authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
     def get_object(self):
-        """Retrieve and return authenticated user profile"""
+        """Retrieve and return authenticated user account"""
         return Person.objects.get(user=self.request.user)
+
+
+class ManageUserAccountView(generics.RetrieveUpdateAPIView):
+    """Manage authenticated user account"""
+    serializer_class = UserAccountSerializer
+    authentication_classes = (authentication.TokenAuthentication,)
+    permission_classes = (IsAuthenticated, IsAdminUser,)
+
+    def get_object(self):
+        """Retrieve and return specified user account by id for superuser"""
+        user_id = self.kwargs['id']
+        user = User.objects.get(id=user_id)
+        return Person.objects.get(user=user)
+
+
+# region SCHOOL APP
+class SystemUsersViewSet(viewsets.ModelViewSet):
+    """Retrieve all system users for superuser"""
+    serializer_class = UserAccountSerializer
+    queryset = Person.objects.all().order_by('-id').distinct()
+    authentication_classes = (authentication.TokenAuthentication,)
+    permission_classes = (IsAuthenticated, IsAdminUser,)
+# endregion

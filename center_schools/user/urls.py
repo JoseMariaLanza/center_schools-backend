@@ -1,6 +1,7 @@
 from django.urls import path
 from user.views import CreateUserView, CreateTokenView, ManageUserView, \
-    SystemUsersViewSet, ManagePersonalDataView, ManageAccountView
+    SystemUsersViewSet, ManagePersonalDataView, ManageMyAccountView, \
+    ManageUserAccountView
 
 app_name = 'user'
 
@@ -11,5 +12,6 @@ urlpatterns = [
     # Superuser route
     path('list/', SystemUsersViewSet.as_view({'get': 'list'}), name='list'),
     path('profile/', ManagePersonalDataView.as_view(), name='profile'),
-    path('account/', ManageAccountView.as_view(), name='account'),
+    path('account/<int:id>/', ManageUserAccountView.as_view(), name='account'),
+    path('my-account/', ManageMyAccountView.as_view(), name='my-account'),
 ]

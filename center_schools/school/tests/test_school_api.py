@@ -73,13 +73,13 @@ class PublicSchoolApiTests(TestCase):
         self.client = APIClient()
 
     def test_login_required(self):
-        """Test that login is required for retrieving user personal data"""
+        """Test that login is required for retrieving user data"""
         url = user_me_url()
         res = self.client.get(url)
 
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
-    def test_not_retrieve_school_members_for_unauthenticated_user(self):
+    def test_retrieve_school_members_for_unauthenticated_user_fails(self):
         """Test that login is required for retrieving a
         list of school members"""
         url = school_members()
@@ -94,8 +94,8 @@ class PrivateSchoolApiTests(TestCase):
     def setUp(self):
         self.client = APIClient()
 
-    def test_retrieve_authenticated_user_me_success(self):
-        """Test retrieving user personal data"""
+    def test_retrieve_authenticated_user_data_success(self):
+        """Test retrieving user data"""
         user = sample_user()
         self.client.force_authenticate(user)
 
@@ -108,13 +108,13 @@ class PrivateSchoolApiTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)
 
-    def test_update_authenticated_user_profile(self):
+    def test_update_authenticated_user_profile_success(self):
         """Thest that updating profile data"""
         pass
 
     # region Admin Users Only
-    def test_retrieve_school_members_forbidden_to_user(self):
-        """Test that a common user is not authorized to view school members"""
+    def test_retrieve_school_members_to_common_user_forbidden(self):
+        """Test that a common user is forbidden to view school members"""
         user = sample_user()
         self.client.force_authenticate(user)
 
@@ -123,8 +123,8 @@ class PrivateSchoolApiTests(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_retrieve_school_members_to_school_user_admin(self):
-        """Test that a superuser can view all users"""
+    def test_retrieve_school_members_to_superuser_success(self):
+        """Test retrieve all system user to superuser"""
         user = sample_superuser()
         self.client.force_authenticate(user)
 

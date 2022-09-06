@@ -3,4 +3,6 @@ djangorestframework>=3.13.1
 psycopg2>=2.7.5
 Pillow>=9.0
 
+django-cors-headers
+
 flake8>=4.0.1

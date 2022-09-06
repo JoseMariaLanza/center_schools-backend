@@ -12,6 +12,12 @@ CREATE_USER_URL = reverse('user:create')
 TOKEN_URL = reverse('user:token')
 USER_LIST_URL = reverse('user:list')
 ME_URL = reverse('user:me')
+USER_ACCOUNT = reverse('user:my-account')
+
+
+def user_account_url(id):
+    """Return person detail URL"""
+    return reverse('user:account', args=[id])
 
 
 def sample_common_user(**params):
@@ -130,7 +136,7 @@ class PublicUserApiTests(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
-    def test_retrieve_user_list_to_unauthorized_user(self):
+    def test_retrieve_user_list_to_unauthorized_user_fails(self):
         """Test that deny query to user list for unauthorized user"""
         self.client.force_authenticate(self.user)
 
@@ -156,7 +162,7 @@ class PrivateUserApiTests(TestCase):
         # self.client.force_authenticate(user=self.user)
 
     def test_retrieve_user_data_success(self):
-        """Test retrieving profile for logged in user"""
+        """Test retrieving user data for logged in user"""
         self.client.force_authenticate(user=self.user)
         res = self.client.get(ME_URL)
 
@@ -173,8 +179,8 @@ class PrivateUserApiTests(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
-    def test_update_user_data_profile(self):
-        """Test updating the user profile for authenticated user"""
+    def test_update_user_data_success(self):
+        """Test updating the user data for authenticated user is success"""
         payload = {'username': 'new username', 'password': 'newpassword'}
 
         self.client.force_authenticate(user=self.user)
@@ -191,3 +197,33 @@ class PrivateUserApiTests(TestCase):
         res = self.client.get(USER_LIST_URL)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+    def test_retrieve_logged_in_user_account_success(self):
+        """Test that retrieve user account by id"""
+        self.client.force_authenticate(self.superuser)
+        res = self.client.get(USER_ACCOUNT)
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+    def test_retrieve_user_account_by_id_success(self):
+        """Test that retrieve user account by id"""
+        self.client.force_authenticate(self.superuser)
+        res1 = self.client.get(user_account_url(self.user.id))
+
+        user2 = sample_common_user(
+            email='sample@user.com',
+            password='testpass',
+            username='User Name'
+        )
+        res2 = self.client.get(user_account_url(user2.id))
+
+        self.assertEqual(res2.status_code, status.HTTP_200_OK)
+        # self.assertEqual(res2.data, {
+        #     'email': user2.email,
+        #     'username': user2.username
+        # })
+        self.assertEqual(res1.status_code, status.HTTP_200_OK)
+        # self.assertEqual(res1.data, {
+        #     'email': self.user.email,
+        #     'username': self.user.username
+        # })
