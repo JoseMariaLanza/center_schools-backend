@@ -6,3 +6,4 @@ Pillow>=9.0
 django-cors-headers
 
 flake8>=4.0.1
+drf_social_oauth2==2.1.2
