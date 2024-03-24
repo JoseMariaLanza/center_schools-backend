@@ -26,9 +26,11 @@ SECRET_KEY = 'django-insecure-jwyqq!^f8%rjatpaq+gvsplldlo*rn%5830)o$w9juugd4kox*
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = ['http://localhost:3000', 'http://localhost:8000']
 
 CORS_ALLOW_ALL_ORIGINS = True
+
+# ALLOWED_HOSTS = ['*']
 
 # CORS_ALLOWED_ORIGINS = {
 #     "http://localhost:3000"
@@ -37,6 +39,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 # Application definition
 
 INSTALLED_APPS = [
+    'sslserver',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -53,7 +56,7 @@ INSTALLED_APPS = [
     # drf oauth2
     'oauth2_provider',
     'social_django',
-    'drf_social_oauth2'
+    'drf_social_oauth2',
 ]
 
 MIDDLEWARE = [
@@ -185,9 +188,9 @@ SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
 # SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = <your app secret goes here>
 
 # Define SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE to get extra permissions from Google.
-SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
-    'https://www.googleapis.com/auth/userinfo.email',
-    'https://www.googleapis.com/auth/userinfo.profile',
-]
+# SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
+#     'https://www.googleapis.com/auth/userinfo.email',
+#     'https://www.googleapis.com/auth/userinfo.profile',
+# ]
 
 SOCIAL_AUTH_USER_FIELDS = ['email', 'password', 'username']

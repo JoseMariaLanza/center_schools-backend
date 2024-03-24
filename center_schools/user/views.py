@@ -1,3 +1,4 @@
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework import generics, viewsets, authentication
 from rest_framework.permissions import IsAuthenticated, \
     BasePermission
@@ -9,7 +10,6 @@ from school.models.Person import Person
 from school.serializers import PersonSerializer, UserAccountSerializer
 
 from user.models.User import User
-
 
 class CreateUserView(generics.CreateAPIView):
     """Create a new user in the system"""
